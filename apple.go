@@ -59,7 +59,14 @@ type (
 		Field string `json:"field"`
 		SortOrder string `json:"sortOrder"`
 	}
+	Selector struct {
+		Conditions []SelectorCondition `json:"conditions"`
+		Fields []string `json:"fields"`
+		OrderBy []Sorting `json:"orderBy"`
+		Pagination Pagination`json:"pagination"`
+	}
 )
+
 
 // New 获取并返回实例
 func New(options ...EngineOption) *Engine {

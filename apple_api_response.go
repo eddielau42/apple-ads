@@ -114,3 +114,26 @@ type (
 		ApiBaseResponse
 	}
 )
+
+type (
+	AdGroup struct {
+		AutomatedKeywordsOptIn bool `json:"automatedKeywordsOptIn"`
+		CpaGoal Money `json:"cpaGoal"`
+		DefaultBidAmount Money `json:"defaultBidAmount"`
+		EndTime string `json:"endTime"`
+		Name string `json:"name"`
+		StartTime string `json:"startTime"`
+		Status string `json:"status"`
+		TargetingDimensions interface{} `json:"targetingDimensions"`
+	}
+
+	AdGroupResponse struct {
+		Data AdGroup `json:"data"`
+		ApiBaseResponse
+	}
+
+	AdGroupListResponse struct {
+		Data []AdGroup `json:"data"`
+		ApiBaseResponse
+	}
+)

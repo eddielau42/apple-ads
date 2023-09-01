@@ -10,15 +10,6 @@ import (
 )
 
 type (
-	CampaignSelector struct {
-		Conditions []SelectorCondition `json:"conditions"`
-		Fields []string `json:"fields"`
-		OrderBy []Sorting `json:"orderBy"`
-		Pagination Pagination`json:"pagination"`
-	}
-)
-
-type (
 	UpdateCampaign struct {
 		BudgetAmount Money `json:"budgetAmount"`
 		BudgetOrders []int64 `json:"budgetOrders"`
@@ -68,7 +59,7 @@ func (engine *Engine)CreateCampaign(campaign Campaign) (*CampaignResponse, error
 }
 
 // FindCampaign 查找推广活动
-func (engine *Engine)FindCampaign(selector *CampaignSelector) (*CampaignListResponse, error) {
+func (engine *Engine)FindCampaign(selector *Selector) (*CampaignListResponse, error) {
 	var (
 		err error
 		campaignListResp *CampaignListResponse
@@ -119,7 +110,7 @@ func (engine *Engine)GetCampaign(campaignID int64) (*CampaignResponse, error) {
 
 	resp := reqCli.Visit("GET", link, reqHeaders, nil, apiTimeout, "", nil)
 	if resp.Error != nil {
-		return nil, fmt.Errorf("获取推广活动失败, 响应结果: %w", resp.Error)
+		return nil, fmt.Errorf("创建推广活动失败, 响应结果: %w", resp.Error)
 	}
 
 	err = json.Unmarshal([]byte(resp.Text), &campaignResp)
@@ -131,7 +122,7 @@ func (engine *Engine)GetCampaign(campaignID int64) (*CampaignResponse, error) {
 }
 
 // AllCampaign 获取所有推广活动
-func (engine *Engine) AllCampaign(limit, offset int32) (*CampaignListResponse, error) {
+func (engine *Engine)AllCampaign(limit, offset int32) (*CampaignListResponse, error) {
 	var (
 		err error
 		campaignListResp *CampaignListResponse
@@ -165,7 +156,7 @@ func (engine *Engine) AllCampaign(limit, offset int32) (*CampaignListResponse, e
 }
 
 // UpdateCampaign 更新推广活动
-func (engine *Engine) UpdateCampaign(campaignID int64, updateReq *UpdateCampaignRequest) (*CampaignResponse, error) {
+func (engine *Engine)UpdateCampaign(campaignID int64, updateReq *UpdateCampaignRequest) (*CampaignResponse, error) {
 	var (
 		err error
 		campaignResp *CampaignResponse
@@ -199,7 +190,7 @@ func (engine *Engine) UpdateCampaign(campaignID int64, updateReq *UpdateCampaign
 }
 
 // DeleteCampaign 删除推广活动
-func (engine *Engine) DeleteCampaign(campaignID int64) (*VoidResponse, error) {
+func (engine *Engine)DeleteCampaign(campaignID int64) (*VoidResponse, error) {
 	var (
 		err error
 		voidResp *VoidResponse

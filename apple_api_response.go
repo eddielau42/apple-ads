@@ -116,6 +116,51 @@ type (
 )
 
 type (
+	AgeRange struct {
+		MaxAge int32 `json:"maxAge"`
+		MinAge int32 `json:"minAge"`
+	}
+	TargetingDimensions struct {
+		AdminArea *struct{
+			Included []string `json:"included"`
+		} `json:"adminArea"`
+		
+		Age *struct{
+			Included []AgeRange `json:"included"`
+		} `json:"age"`
+		
+		AppCategories struct{
+			Excluded []int `json:"excluded"`
+			Included []int `json:"included"`
+		} `json:"appCategories"`
+		
+		AppDownloaders struct{
+			Excluded []string `json:"excluded"`
+			Included []string `json:"included"`
+		} `json:"appDownloaders"`
+
+		Country *struct{
+			Included []string `json:"included"`
+		} `json:"country"`
+
+		Daypart *struct{
+			UserTime struct{
+				Included []int32 `json:"included"`
+			} `json:"userTime"`
+		} `json:"daypart"`
+
+		DeviceClass *struct{
+			Included []string `json:"included"`
+		} `json:"deviceClass"`
+
+		Gender *struct{
+			Included []string `json:"included"`
+		} `json:"gender"`
+
+		Locality *struct{
+			Included []string `json:"included"`
+		} `json:"locality"`
+	}
 	AdGroup struct {
 		AutomatedKeywordsOptIn bool `json:"automatedKeywordsOptIn"`
 		CpaGoal Money `json:"cpaGoal"`
@@ -124,7 +169,7 @@ type (
 		Name string `json:"name"`
 		StartTime string `json:"startTime"`
 		Status string `json:"status"`
-		TargetingDimensions interface{} `json:"targetingDimensions"`
+		TargetingDimensions TargetingDimensions `json:"targetingDimensions"`
 	}
 
 	AdGroupResponse struct {

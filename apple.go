@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -30,6 +31,8 @@ type(
 		accessToken *AccessToken
 
 		jwtToken string
+
+		orgID int64
 	}
 
 	EngineOption func(engien *Engine)
@@ -40,11 +43,21 @@ type(
 		TokenType   string `json:"token_type"`
 		ExpiresIn   int64  `json:"expires_in"`
 	}
+)
 
-	// AuthorizationResponse 授权返回响应数据
-	AuthorizationResponse struct {
-		AccessToken
-		Error       string `json:"error"`
+type (
+	SelectorCondition struct {
+		Field string `json:"field"`
+		Operator string `json:"operator"`
+		Values []string `json:"values"`
+	}
+	Pagination struct {
+		Limit int32 `json:"limit"`
+		Offset int32 `json:"offset"`
+	}
+	Sorting struct {
+		Field string `json:"field"`
+		SortOrder string `json:"sortOrder"`
 	}
 )
 
@@ -182,6 +195,21 @@ func (engine *Engine) SetAccessToken(accessToken *AccessToken) {
 // SetJwt 设置 jwt-token
 func (engine *Engine) SetJwt(jwtToken string) {
 	engine.jwtToken = jwtToken
+}
+
+// SetOrgID 设置 orgID
+func (engine *Engine) SetOrgID(orgID int64) {
+	engine.orgID = orgID
+}
+
+// AuthInfo
+func (engine *Engine) AuthInfo() map[string]string {
+	return map[string]string{
+		"jwt": engine.jwtToken,
+		"accessToken": engine.accessToken.AccessToken,
+		"accessTokenType": engine.accessToken.TokenType,
+		"accessTokenExpiresIn": strconv.FormatInt(engine.accessToken.ExpiresIn, 10),
+	}
 }
 
 // UserAcl 获取API可访问的角色和组织

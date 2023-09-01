@@ -9,6 +9,8 @@ import (
 
 const (
 	envPath = "./.env"
+
+	orgID = 1234567
 )
 
 var (
@@ -28,28 +30,20 @@ func setup(t *testing.T) func(t *testing.T) {
 		WithPrivateKey(conf["APPLE_PRIVATE_KEY"]),
 	)
 
+	fakeAuth()
+	appleEngine.SetOrgID(orgID)
+
     return func(t *testing.T) {
         // Teardown...
     }
-}
-
-func TestAppleEngine(t *testing.T) {
-	teardown := setup(t)
-    defer teardown(t)
-
-	t.Logf("env-config: %+v\n", conf)
-
-	t.Logf("apple-engine: %+v\n", appleEngine)
-
-	assert.NotEmpty(t, appleEngine)
 }
 
 func TestAppleDetail(t *testing.T) {
 	teardown := setup(t)
     defer teardown(t)
 
-	appleEngine.Auth()
-	t.Logf("apple-engine: %+v\n", conf)
+	// appleEngine.Auth()
+	// t.Logf("auth-info: %+v\n", appleEngine.AuthInfo())
 
 	// ACL
 	aclResp, err := appleEngine.UserAcl()
@@ -62,3 +56,21 @@ func TestAppleDetail(t *testing.T) {
 	assert.NotEmpty(t, meResp)
 }
 
+func TestCampaigns(t *testing.T) {
+	teardown := setup(t)
+    defer teardown(t)
+
+	resp, err := appleEngine.AllCampaign(1, 0)
+	t.Logf("all-campaign: %+v, error: %+v\n", resp, err)
+	assert.NotEmpty(t, resp)
+}
+
+
+func fakeAuth() {
+	appleEngine.SetAccessToken(&AccessToken{
+		TokenType: "Bearer",
+		AccessToken: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwia2lkIjpudWxsfQ..BTfyJjgkmNn1ViMt.SzvponRxmYCF0XOTHOS3qx6Q3BVl5BSsIWRqvThOmvlSXKliubO3xM9C1mgSEXR4416A3ht7PPv-jtjQlq_OJrYum96vPOxj6J1icx8ATreg9pb-qAgxVp0QOPC5tM9goT1lPBu8u1nF4hsy7Jh7CMwOdpK0WC5kfhlOXEmilb6AZkABkSQefBHPi28fSDJjbFtGnIUHmJSRXHHntngommeNHUymDPb-rAXMvSjWmBDcDrWdSAWVrL4BGHwsAEZnFnyyPJC0kp_ddm4dB7jYpO4.sVAiKeOz4AEXejdSLSBbfA",
+		ExpiresIn: 3600,
+	})
+	appleEngine.SetJwt("eyJhbGciOiJFUzI1NiIsImtpZCI6Ijc4YWRhMWFkLTk5OTItNDVkNi04OTE0LTdiODE1YmY5Njk2MyIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiZXhwIjoxNzA5MTA2Mzg5LCJpYXQiOjE2OTM1NTQzODksImlzcyI6IlNFQVJDSEFEUy5mYWU1OGI3MS00MjRlLTRkNDItYjg2Zi1hYmIwMzRjYmY4MmUiLCJzdWIiOiJTRUFSQ0hBRFMuZmFlNThiNzEtNDI0ZS00ZDQyLWI4NmYtYWJiMDM0Y2JmODJlIn0.W9VFut2PKu74CWVVaST45qnFEDI65N3Rpfagr_LtJQh9ZKwWNGeemNKen0meyiNBRpC75fKHy9PORj42qen0zg")
+}

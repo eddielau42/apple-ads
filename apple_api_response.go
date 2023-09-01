@@ -1,6 +1,12 @@
 package appleads
 
 type (
+	// AuthorizationResponse 授权返回响应数据
+	AuthorizationResponse struct {
+		AccessToken
+		Error       string `json:"error"`
+	}
+
 	// PageDetail
 	PageDetail struct {
 		ItemsPerPage int32 `json:"itemsPerPage"`
@@ -25,6 +31,24 @@ type (
 		Pagination PageDetail `json:"pagination,omitempty"`
 		Error ErrorResponse `json:"error"`
 	}
+
+	VoidResponse struct {
+		Data interface{} `json:"data"`
+		ApiBaseResponse
+	}
+
+	Money struct {
+		Amount string `json:"amount"`
+		Currency string `json:"currency"`
+	}
+
+	LOCInvoiceDetails struct {
+		BillingContactEmail string `json:"billingContactEmail"`
+		BuyerEmail string `json:"buyerEmail"`
+		BuyerName string `json:"buyerName"`
+		ClientName string `json:"clientName"`
+		OrderNumber string `json:"orderNumber"`
+	}
 )
 
 type (
@@ -40,8 +64,8 @@ type (
 	}
 
 	UserAclListResponse struct {
-		ApiBaseResponse
 		Data []UserAcl `json:"data"`
+		ApiBaseResponse
 	}
 )
 
@@ -52,5 +76,41 @@ type (
 	}
 	MeDetailResponse struct {
 		Data MeDetail `json:"data"`
+	}
+)
+
+type (
+	Campaign struct {
+		AdminID int64 `json:"adamId"`
+		AdChannelType string `json:"adChannelType"`
+		BillingEvent string `json:"billingEvent"`
+		BudgetAmount Money `json:"budgetAmount"`
+		BudgetOrders []int64 `json:"budgetOrders"`
+		CountriesOrRegions []string `json:"countriesOrRegions"`
+		CountryOrRegionServingStateReasons map[string][]string `json:"countryOrRegionServingStateReasons"`
+		CreationTime string `json:"creationTime"`
+		DailyBudgetAmount Money `json:"dailyBudgetAmount"`
+		Deleted bool `json:"deleted"`
+		DisplayStatus string `json:"displayStatus"`
+		EndTime string `json:"endTime"`
+		ID int64 `json:"id"`
+		LocInvoiceDetails LOCInvoiceDetails `json:"locInvoiceDetails"`
+		ModificationTime string `json:"modificationTime"`
+		Name string `json:"name"`
+		OrgId int64 `json:"orgId"`
+		PaymentModel string `json:"paymentModel"`
+		ServingStateReasons []string `json:"servingStateReasons"`
+		ServingStatus string `json:"servingStatus"`
+		StartTime string `json:"startTime"`
+		Status string `json:"status"`
+		SupplySources []string `json:"supplySources"`
+	}
+	CampaignResponse struct {
+		Data Campaign `json:"data"`
+		ApiBaseResponse
+	}
+	CampaignListResponse struct {
+		Data []Campaign `json:"data"`
+		ApiBaseResponse
 	}
 )

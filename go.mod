@@ -1,4 +1,4 @@
-module apple_ads
+module github.com/eddielau42/apple-ads
 
 go 1.20
 

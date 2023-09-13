@@ -3,6 +3,7 @@ package appleads
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 
 	"github.com/wangyong321/gogorequest"
@@ -19,6 +20,15 @@ type (
 		StartTime string `json:"startTime"`
 		TimeZone string `json:"timeZone"`
 		Selector *Selector `json:"selector"`
+	}
+
+	CustomReportRequest struct {
+		DateRange string `json:"dateRange,omitempty"`
+		StartTime string `json:"startTime,omitempty"`
+		EndTime string `json:"endTime,omitempty"`
+		Granularity string `json:"granularity,omitempty"`
+		Name string `json:"name"`
+		Selector *Selector `json:"selector,omitempty"`
 	}
 )
 
@@ -250,6 +260,119 @@ func (engine *Engine)GetAdReports(campaignID int64, reportRequest *ReportingRequ
 	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("获取活动中的广告效果数据失败, 响应结果: %w", resp.Error)
+	}
+
+	err = json.Unmarshal([]byte(resp.Text), &repResp)
+	if err != nil {
+		return nil, fmt.Errorf("解析数据失败: %w", err)
+	}
+
+	return repResp, nil
+}
+
+// GetImpressionShareReport 获取报告ID
+func (engine *Engine)GetImpressionShareReport(reportRequest *CustomReportRequest) (*CustomReportResponse, error) {
+	var (
+		err error
+		repResp *CustomReportResponse
+	)
+
+	link := ApiBaseURL() + "/custom-reports"
+
+	reqCli := gogorequest.NewSyncEngine()
+	reqHeaders := map[string]string{
+		"Content-Type": "application/json",
+		"Authorization": engine.accessToken.TokenType + " " + engine.accessToken.AccessToken,
+		"X-AP-Context": fmt.Sprintf("orgId=%v", engine.orgID),
+	}
+
+	reqBody, err := json.Marshal(reportRequest)
+	if err != nil {
+		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
+	}
+
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
+	if resp.Error != nil {
+		return nil, fmt.Errorf("获取报告ID失败, 响应结果: %w", resp.Error)
+	}
+
+	err = json.Unmarshal([]byte(resp.Text), &repResp)
+	if err != nil {
+		return nil, fmt.Errorf("解析数据失败: %w", err)
+	}
+
+	return repResp, nil
+}
+
+// GetSingleImpressionShareReport 获取包含指标和元数据的单个印象份额报告
+func (engine *Engine)GetSingleImpressionShareReport(reportID int64) (*CustomReportResponse, error) {
+	var (
+		err error
+		repResp *CustomReportResponse
+	)
+
+	link := ApiBaseURL() + "/custom-reports/" + strconv.FormatInt(reportID, 10)
+
+	reqCli := gogorequest.NewSyncEngine()
+	reqHeaders := map[string]string{
+		"Content-Type": "application/json",
+		"Authorization": engine.accessToken.TokenType + " " + engine.accessToken.AccessToken,
+		"X-AP-Context": fmt.Sprintf("orgId=%v", engine.orgID),
+	}
+
+	resp := reqCli.Visit("GET", link, reqHeaders, nil, apiTimeout, "", nil)
+	if resp.Error != nil {
+		return nil, fmt.Errorf("获取包含指标和元数据的单个印象份额报告失败, 响应结果: %w", resp.Error)
+	}
+
+	err = json.Unmarshal([]byte(resp.Text), &repResp)
+	if err != nil {
+		return nil, fmt.Errorf("解析数据失败: %w", err)
+	}
+
+	return repResp, nil
+}
+// GetAllImpressionShareReports 获取包含指标和元数据的所有印象份额报告
+func (engine *Engine)GetAllImpressionShareReports(field, sort string, limit, offset int32) (*CustomReportResponse, error) {
+	var (
+		err error
+		repResp *CustomReportResponse
+	)
+
+	link := ApiBaseURL() + "/custom-reports"
+
+	reqCli := gogorequest.NewSyncEngine()
+	reqHeaders := map[string]string{
+		"Content-Type": "application/json",
+		"Authorization": engine.accessToken.TokenType + " " + engine.accessToken.AccessToken,
+		"X-AP-Context": fmt.Sprintf("orgId=%v", engine.orgID),
+	}
+
+	query := url.Values{}
+	if field != "" {
+		query.Add("field", field)
+	}
+	if sort != "" {
+		query.Add("sortOrder", sort)
+	}
+	if limit < 0 {
+		limit = 20
+	} else if limit > 50 {
+		limit = 50
+	}
+	query.Add("limit", strconv.Itoa(int(limit)))
+	if offset < 0 {
+		limit = 0
+	}
+	query.Add("offset", strconv.Itoa(int(offset)))
+
+	if len(query) > 0{
+		link += "?" + query.Encode()
+	}
+
+	resp := reqCli.Visit("GET", link, reqHeaders, nil, apiTimeout, "", nil)
+	if resp.Error != nil {
+		return nil, fmt.Errorf("获取包含指标和元数据的所有印象份额报告失败, 响应结果: %w", resp.Error)
 	}
 
 	err = json.Unmarshal([]byte(resp.Text), &repResp)

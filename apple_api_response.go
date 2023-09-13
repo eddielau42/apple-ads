@@ -329,4 +329,23 @@ type (
 		} `json:"data"`
 		ApiBaseResponse
 	}
+
+	CustomReportDataResponse struct {
+		CreationTime string `json:"creationTime"`
+		Dimensions []string `json:"dimensions"`
+		DownloadUri string `json:"downloadUri"`
+		EndTime string `json:"endTime"`
+		Granularity string `json:"granularity"`
+		ID int64 `json:"id"`
+		Metrics []string `json:"metrics"`
+		ModificationTime string `json:"modificationTime"`
+		Name string `json:"name"`
+		StartTime string `json:"startTime"`
+		State string `json:"state"`
+		Selector Selector `json:"selector"`
+	}
+	CustomReportResponse struct {
+		Data []CustomReportDataResponse `json:"data"`
+		ApiBaseResponse
+	}
 )

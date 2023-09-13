@@ -234,3 +234,30 @@ type (
 		ApiBaseResponse
 	}
 )
+
+// 搜索相关
+type (
+	AppInfo struct {
+		AdamId int64 `json:"adamId"`
+		AppName string `json:"appName"`
+		DeveloperName string `json:"developerName"`
+		CountryOrRegionCodes []string `json:"countryOrRegionCodes"`
+	}
+	AppInfoListResponse struct {
+		Data []AppInfo `json:"data"`
+		ApiBaseResponse
+	}
+
+	SearchEntity struct {
+		AdminArea string `json:"adminArea"`
+		CountryOrRegion string `json:"countryOrRegion"`
+		DisplayName string `json:"displayName"`
+		Entity string `json:"entity"`
+		ID string `json:"id"`
+		Locality string `json:"locality"`
+	}
+	SearchEntityListResponse struct {
+		Data []SearchEntity `json:"data"`
+		ApiBaseResponse
+	}
+)

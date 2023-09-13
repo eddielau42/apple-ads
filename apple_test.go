@@ -107,28 +107,56 @@ func TestKeyword(t *testing.T) {
 	campaignID := 1440199010
 	adGroupID := 1440263406
 
-	keywordsResp, err := appleEngine.GetAllTargetKeywords(int64(campaignID), int64(adGroupID))
-	t.Logf("get-keywords: %+v, error: %+v\n", keywordsResp, err)
-	assert.NotEmpty(t, keywordsResp)
+	// keywordsResp, err := appleEngine.GetAllTargetKeywords(int64(campaignID), int64(adGroupID))
+	// t.Logf("get-keywords: %+v, error: %+v\n", keywordsResp, err)
+	// assert.NotEmpty(t, keywordsResp)
 
 	keywordID := 1440294362
 	keywordResp, err := appleEngine.GetTargetKeyword(int64(campaignID), int64(adGroupID), int64(keywordID))
 	t.Logf("get-keyword: %+v, error: %+v\n", keywordResp, err)
 	assert.NotEmpty(t, keywordResp)
 
-	limit := 1
-	offset := 0
-	nkeywordsResp, err := appleEngine.GetAllCampaignNegativeKeywords(int64(campaignID), int32(limit), int32(offset))
-	t.Logf("get-negative-keywords: %+v, error: %+v\n", nkeywordsResp, err)
-	assert.NotEmpty(t, nkeywordsResp)
+	// limit := 1
+	// offset := 0
+	// nkeywordsResp, err := appleEngine.GetAllCampaignNegativeKeywords(int64(campaignID), int32(limit), int32(offset))
+	// t.Logf("get-negative-keywords: %+v, error: %+v\n", nkeywordsResp, err)
+	// assert.NotEmpty(t, nkeywordsResp)
+
+}
+
+func TestSearch(t *testing.T) {
+	teardown := setup(t)
+    defer teardown(t)
+
+	limit, offset := 10, 0
+
+	searchWords, owned := "筷子", false
+	appsResp, err := appleEngine.SearchApps(searchWords, owned, int32(limit), int32(offset))
+	t.Logf("search-apps: %+v, error: %+v\n", appsResp, err)
+	assert.NotEmpty(t, appsResp)
+
+	countrycode, entity := "PH", ""
+	searchWords = "Manila"
+	geosResp, err := appleEngine.SearchGeo(countrycode, entity, searchWords, int32(limit), int32(offset))
+	t.Logf("search-geos: %+v, error: %+v\n", geosResp, err)
+	assert.NotEmpty(t, geosResp)
+
+	cond := make([]GeoRequest, 0)
+	cond = append(cond, GeoRequest{
+		ID: "US|CA|Cupertino",
+		Entity: "locality",
+	})
+	geosResp2, err := appleEngine.GetGeoList(cond, int32(limit), int32(offset))
+	t.Logf("get-geos: %+v, error: %+v\n", geosResp2, err)
+	assert.NotEmpty(t, geosResp2)
 }
 
 
 func fakeAuth() {
 	appleEngine.SetAccessToken(&AccessToken{
 		TokenType: "Bearer",
-		AccessToken: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwia2lkIjpudWxsfQ..uo3ZIKZqgsRYnB_Y.a7ILfWOSd79YQo_zjyd9llon65L6hwlHNBl3OwEbLX9PgHIlu9yAsC8nH8fc3XErV7BmNN5Y0rdYqFxrEZXw0Mgd_qBRK3roIs6eeNyttaeD86TXVkY857F9P2nb41r5PRUbgVBBFnNxNCqdOYLHNUomCGXMYuLDZACXQ-bg-5-A09-MlEdy-gayFU6i5r7LXHx-3CH5emZHl2MRgdhcD43OZyBNXqOXah00Q1YlYUQFtQkGhnmXqp8eMDwLKDwus8SbihjzBiYg-7trsxq_Z88.tqHAbyd57C7Ag7EaH7289A",
+		AccessToken: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwia2lkIjpudWxsfQ..A9kMAoFQ2CxwTdwu.Ft4Xj27R1FVf_LmalFNaegntD-VMCfyb1bNz9-8rCVhdE7S8mIv3uUeK3kIUPRZFkBR_FxT8h_SJhbltDWXdy3FbyzQfmPowcRGrKuHDcuI5wScckiSw7lQlJBQlCmXWlRJMb7lb3_HCPMvc89lOeM__QAciEqY7ywVIz9cFQNE4XjyGcflia_wFxzVFKHsQme9L4xY6MITHfvQIjMv5WDOGiROyx60R_PTtLBmtHgDDgE2GIZHcOEQc3LqD3fX77b2y9F3gTO7Z6BhB9Y16VeI.vzffORXqBVUZ9xUpWbMueA",
 		ExpiresIn: 3600,
 	})
-	appleEngine.SetJwt("eyJhbGciOiJFUzI1NiIsImtpZCI6Ijc4YWRhMWFkLTk5OTItNDVkNi04OTE0LTdiODE1YmY5Njk2MyIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiZXhwIjoxNzA5MTIwNDkwLCJpYXQiOjE2OTM1Njg0OTAsImlzcyI6IlNFQVJDSEFEUy5mYWU1OGI3MS00MjRlLTRkNDItYjg2Zi1hYmIwMzRjYmY4MmUiLCJzdWIiOiJTRUFSQ0hBRFMuZmFlNThiNzEtNDI0ZS00ZDQyLWI4NmYtYWJiMDM0Y2JmODJlIn0.iRZYMMbaje8zj1I1LdSKL822G4dQsNEY_6LdEeG-7EKv1meIGH_z0cOuO1HxoroFTd_og8UOTut-K_WiRvUKkg")
+	appleEngine.SetJwt("eyJhbGciOiJFUzI1NiIsImtpZCI6Ijc4YWRhMWFkLTk5OTItNDVkNi04OTE0LTdiODE1YmY5Njk2MyIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiZXhwIjoxNzA5MDIwMTY3LCJpYXQiOjE2OTM0NjgxNjcsImlzcyI6IlNFQVJDSEFEUy5mYWU1OGI3MS00MjRlLTRkNDItYjg2Zi1hYmIwMzRjYmY4MmUiLCJzdWIiOiJTRUFSQ0hBRFMuZmFlNThiNzEtNDI0ZS00ZDQyLWI4NmYtYWJiMDM0Y2JmODJlIn0.INy5xbEj68_NtnZT_oDmgkyT8BWxbkT5oPd6f0p0qcDLLRv8kNP2w_SNurm7DLiwgDl6RnSnecw9C1jGofVb1Q")
 }

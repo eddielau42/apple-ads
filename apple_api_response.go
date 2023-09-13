@@ -261,3 +261,72 @@ type (
 		ApiBaseResponse
 	}
 )
+
+// 广告相关
+type (
+	Ad struct {
+		AdGroupID int64 `json:"adGroupId"`
+		CampaignID int64 `json:"campaignId"`
+		CreationTime string `json:"creationTime"`
+		CreativeID int64 `json:"creativeId"`
+		CreativeType string `json:"creativeType"`
+		Deleted bool `json:"deleted"`
+		ID int64 `json:"id"`
+		ModificationTime string `json:"modificationTime"`
+		Name string `json:"name"`
+		OrgId int64 `json:"orgId"`
+		ServingStateReasons []string `json:"servingStateReasons"`
+		ServingStatus string `json:"servingStatus"`
+		Status string `json:"status"`
+	}
+	AdResponse struct {
+		Data Ad `json:"data"`
+	}
+	AdListResponse struct {
+		Data []Ad `json:"data"`
+		ApiBaseResponse
+	}
+)
+
+// 报告相关
+type (
+	SpendRow struct {
+		ConversionRate float64 `json:"conversionRate"`
+		Impressions int64 `json:"impressions"`
+		Installs int64 `json:"installs"`
+		LatOffInstalls int64 `json:"latOffInstalls"`
+		LatOnInstalls int64 `json:"latOnInstalls"`
+		NewDownloads int64 `json:"newDownloads"`
+		Redownloads int64 `json:"redownloads"`
+		Taps int64 `json:"taps"`
+		TTR float64 `json:"ttr"`
+		AvgCPA Money `json:"avgCPA"`
+		AvgCPM Money `json:"avgCPM"`
+		AvgCPT Money `json:"avgCPT"`
+		LocalSpend Money `json:"localSpend"`
+	}
+	ExtendedSpendRow struct {
+		Date string `json:"date"`
+		SpendRow
+	}
+	GrandTotals struct {
+		Other bool `json:"other"`
+		Total SpendRow `json:"total"`
+	}
+	ReportingRow struct {
+		GrandTotals
+		Insights interface{} `json:"insights,omitempty"`
+		Granularity []ExtendedSpendRow `json:"granularity,omitempty"`
+		MetaData interface{} `json:"metadata,omitempty"`
+	}
+	ReportingDataResponse struct {
+		Row []ReportingRow `json:"row"`
+		GrandTotals GrandTotals `json:"grandTotals"`
+	}
+	ReportingResponse struct {
+		Data struct{
+			ReportingDataResponse `json:"reportingDataResponse"`
+		} `json:"data"`
+		ApiBaseResponse
+	}
+)

@@ -151,11 +151,87 @@ func TestSearch(t *testing.T) {
 	assert.NotEmpty(t, geosResp2)
 }
 
+func TestAd(t *testing.T) {
+	teardown := setup(t)
+    defer teardown(t)
+
+	campaignID := 1440199010
+	adGroupID := 1440263406
+
+	adsResp, err := appleEngine.GetAllAds(int64(campaignID), int64(adGroupID))
+	t.Logf("get-all-ads: %+v, error: %+v\n", adsResp, err)
+	assert.NotEmpty(t, adsResp)
+}
+
+func TestReporting(t *testing.T) {
+	teardown := setup(t)
+    defer teardown(t)
+
+	repReq := &ReportingRequest{
+		StartTime: "2023-08-01",
+		EndTime: "2023-08-30",
+		TimeZone: "UTC",
+		Granularity: "DAILY", // HOURLY|DAILY|WEEKLY|MONTHLY
+		ReturnGrandTotals: true,
+		ReturnRecordsWithNoMetrics: true,
+		ReturnRowTotals: true,
+		GroupBy: []string{"countryOrRegion"},
+		Selector: &Selector{
+			OrderBy: []Sorting{
+				{
+					Field: "countryOrRegion",
+					SortOrder: "ASCENDING",
+				},
+			},
+			Pagination: Pagination{
+				Offset: 0,
+				Limit: 1,
+			},
+		},
+	}
+	repResp, err := appleEngine.GetCampaignReports(repReq)
+	// t.Logf("get-campaign-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+
+	campaignID := 1440199010
+	adGroupID := 1440263406
+
+	repResp, err = appleEngine.GetAdGroupReports(int64(campaignID), repReq)
+	// t.Logf("get-adgroup-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+	
+	repResp, err = appleEngine.GetKeywordReports(int64(campaignID), repReq)
+	// t.Logf("get-keyword-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+	
+	repResp, err = appleEngine.GetKeywordReportsWithinAdGroup(int64(campaignID), int64(adGroupID), repReq)
+	// t.Logf("get-keyword-within-adgroup-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+	
+	repResp, err = appleEngine.GetSearchTermReports(int64(campaignID), repReq)
+	// t.Logf("get-search-term-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+	
+	repResp, err = appleEngine.GetSearchTermReportsWithinAdGroup(int64(campaignID), int64(adGroupID), repReq)
+	// t.Logf("get-search-term-within-adgroup-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+
+	repResp, err = appleEngine.GetAdReports(int64(campaignID), repReq)
+	// t.Logf("get-ad-reporting: %+v, error: %+v\n", repResp, err)
+	assert.Empty(t, err)
+	assert.NotEmpty(t, repResp)
+}
 
 func fakeAuth() {
 	appleEngine.SetAccessToken(&AccessToken{
 		TokenType: "Bearer",
-		AccessToken: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwia2lkIjpudWxsfQ..A9kMAoFQ2CxwTdwu.Ft4Xj27R1FVf_LmalFNaegntD-VMCfyb1bNz9-8rCVhdE7S8mIv3uUeK3kIUPRZFkBR_FxT8h_SJhbltDWXdy3FbyzQfmPowcRGrKuHDcuI5wScckiSw7lQlJBQlCmXWlRJMb7lb3_HCPMvc89lOeM__QAciEqY7ywVIz9cFQNE4XjyGcflia_wFxzVFKHsQme9L4xY6MITHfvQIjMv5WDOGiROyx60R_PTtLBmtHgDDgE2GIZHcOEQc3LqD3fX77b2y9F3gTO7Z6BhB9Y16VeI.vzffORXqBVUZ9xUpWbMueA",
+		AccessToken: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIiwia2lkIjpudWxsfQ..jepIOKda49YXGGWX.aX6NNNFls2_yfDtXYbbpue9KpNwdKOQceFaF-Zjs6_Ln6fc9jHspkgHhdJRSBU878fBA_eeigKTcJX1rHgy-CDjdQxLYr9k4PthFHcbOgjwPWrsXJn3La6fiZcW8jCFHKHhZ_NabdpY_XCmAPlgQf0PoXJqMxEIPTXfLrdpi4_8isYg4XcPKhet0niPpY4YilClFJIj8LvYJvrN8J3vAgFG0NG6j28v-1fL-T-JfTh113dvenepZb2SLx4pbw44x_J6ksiwf8vogVcz4_SK6Vx8.62SfKJDzUTAFKJGsPJsoEg",
 		ExpiresIn: 3600,
 	})
 	appleEngine.SetJwt("eyJhbGciOiJFUzI1NiIsImtpZCI6Ijc4YWRhMWFkLTk5OTItNDVkNi04OTE0LTdiODE1YmY5Njk2MyIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiZXhwIjoxNzA5MDIwMTY3LCJpYXQiOjE2OTM0NjgxNjcsImlzcyI6IlNFQVJDSEFEUy5mYWU1OGI3MS00MjRlLTRkNDItYjg2Zi1hYmIwMzRjYmY4MmUiLCJzdWIiOiJTRUFSQ0hBRFMuZmFlNThiNzEtNDI0ZS00ZDQyLWI4NmYtYWJiMDM0Y2JmODJlIn0.INy5xbEj68_NtnZT_oDmgkyT8BWxbkT5oPd6f0p0qcDLLRv8kNP2w_SNurm7DLiwgDl6RnSnecw9C1jGofVb1Q")

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	_ "net/url"
 	"strconv"
 
 	"github.com/wangyong321/gogorequest"
@@ -31,7 +30,7 @@ func (engine *Engine)CreateTargetKeywords(campaignID, adGroupID int64, keywords 
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("创建广告组目标关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -65,7 +64,7 @@ func (engine *Engine)FindTargetKeywords(campaignID int64, selector Selector) (*K
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("查询获取广告组目标关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -157,7 +156,7 @@ func (engine *Engine)UpdateTargetKeywords(campaignID, adGroupID int64, keywords 
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("PUT", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("PUT", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("更新广告组目标关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -220,7 +219,7 @@ func (engine *Engine)DeleteAllTargetKeywords(campaignID, adGroupID int64, keywor
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("删除活动广告组目标关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -254,7 +253,7 @@ func (engine *Engine)CreateCampaignNegativeKeywords(campaignID int64, keywords [
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("创建否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -288,7 +287,7 @@ func (engine *Engine)FindCampaignNegativeKeywords(campaignID int64, selector Sel
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("查询获取活动否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -385,7 +384,7 @@ func (engine *Engine)UpdateNegativeKeywords(campaignID int64, keywords []Negativ
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("PUT", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("PUT", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("更新活动否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -419,7 +418,7 @@ func (engine *Engine)DeleteCampaignNegativeKeywords(campaignID int64, keywordIDs
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("删除活动否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -453,7 +452,7 @@ func (engine *Engine)CreateAdGroupNegativeKeywords(campaignID, adGroupID int64, 
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("创建广告组否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -487,7 +486,7 @@ func (engine *Engine)FindAdGroupNegativeKeywords(campaignID int64, selector Sele
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("查询获取广告组否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -584,7 +583,7 @@ func (engine *Engine)UpdateAdGroupNegativeKeywords(campaignID, adGroupID int64, 
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("PUT", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("PUT", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("更新广告组否定关键字失败, 响应结果: %w", resp.Error)
 	}
@@ -618,7 +617,7 @@ func (engine *Engine)DeleteAdGroupNegativeKeywords(campaignID, adGroupID int64, 
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("删除广告组否定关键字失败, 响应结果: %w", resp.Error)
 	}

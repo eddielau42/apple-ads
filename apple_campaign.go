@@ -45,7 +45,7 @@ func (engine *Engine)CreateCampaign(campaign Campaign) (*CampaignResponse, error
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("创建推广活动失败, 响应结果: %w", resp.Error)
 	}
@@ -79,7 +79,7 @@ func (engine *Engine)FindCampaign(selector *Selector) (*CampaignListResponse, er
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("POST", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("POST", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("推广活动失败, 响应结果: %w", resp.Error)
 	}
@@ -176,7 +176,7 @@ func (engine *Engine)UpdateCampaign(campaignID int64, updateReq *UpdateCampaignR
 		return nil, fmt.Errorf("序列化请求参数失败: %w", err)
 	}
 
-	resp := reqCli.Visit("PUT", link, reqHeaders, reqBody, apiTimeout, "", nil)
+	resp := reqCli.Visit("PUT", link, reqHeaders, string(reqBody), apiTimeout, "", nil)
 	if resp.Error != nil {
 		return nil, fmt.Errorf("更新推广活动失败, 响应结果: %w", resp.Error)
 	}
